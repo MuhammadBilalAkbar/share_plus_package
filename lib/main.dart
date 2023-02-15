@@ -1,10 +1,8 @@
 import 'dart:io';
-
 import 'package:file_selector/file_selector.dart'
     hide XFile; // hides to test if share_plus exports XFile
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart'
     hide XFile; // hides to test if share_plus exports XFile
 import 'package:share_plus/share_plus.dart';
@@ -19,17 +17,24 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context) =>
+    MaterialApp(
       title: 'Share Plus Plugin Demo',
       theme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: const Color(0x9f4376f8),
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(fontSize: 30),
+          backgroundColor: Colors.orange,
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(fontSize: 22.0),
+          titleMedium: TextStyle(fontSize: 20.0),
+        ),
       ),
       home: const SharePlusPage(),
     );
   }
-}
 
 class SharePlusPage extends StatefulWidget {
   const SharePlusPage({Key? key}) : super(key: key);
@@ -48,7 +53,9 @@ class SharePlusPageState extends State<SharePlusPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Share Plus Plugin Demo'),
+          title:  const Text(
+            'Share Plus Plugin Demo'
+          ),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -63,7 +70,7 @@ class SharePlusPageState extends State<SharePlusPage> {
                   hintText: 'Enter some text and/or link to share',
                 ),
                 maxLines: null,
-                onChanged: (String value) => setState(() {
+                onChanged: (value) => setState(() {
                   text = value;
                 }),
               ),
@@ -106,8 +113,7 @@ class SharePlusPageState extends State<SharePlusPage> {
                         imageNames.add(file.name);
                       });
                     }
-                  }
-                  else {
+                  } else {
                     // Using `package:image_picker` to get image from gallery.
                     final pickedFile = await imagePicker.pickImage(
                       source: ImageSource.gallery,
@@ -154,11 +160,10 @@ class SharePlusPageState extends State<SharePlusPage> {
                     source: ImageSource.gallery,
                   );
                   if (video == null) return;
-                  // await Share.share([video.path], subject: 'This is the subject.');
-                  if(!mounted) return;
+                  if (!mounted) return;
                   _onShare(context);
                 },
-                child: const Text('Share  File'),
+                child: const Text('Share Video'),
               ),
             ],
           ),
@@ -237,9 +242,9 @@ class SharePlusPageState extends State<SharePlusPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Share result: ${result.status}"),
+            Text('Share result: ${result.status}'),
             if (result.status == ShareResultStatus.success)
-              Text("Shared to: ${result.raw}")
+              Text('Shared to: ${result.raw}')
           ],
         ),
       );
