@@ -219,7 +219,7 @@ await imagePicker.pickVideo(
 - In `image_preview.dart`, imagePaths and onDelete are initialized.
 ```dart
 final List<String> imagePaths;
-final Function(int)? onDelete;
+final Function(int)? onDelete; 
 ```
 Then `imageWidgets` are initialized.
 ```dart
