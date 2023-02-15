@@ -214,7 +214,7 @@ Third button is `Share Video` and when it is pressed, you can choose files. Ther
 await imagePicker.pickVideo(
                     source: ImageSource.gallery,
                   );
-```
+``` 
 
 - In `image_preview.dart`, imagePaths and onDelete are initialized.
 ```dart
