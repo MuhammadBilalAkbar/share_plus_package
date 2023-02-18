@@ -97,16 +97,15 @@ Answer: Follow this link: https://medium.flutterdevs.com/sharing-files-in-flutte
 2. There is no need to setup for android and iOS. Also compatible with Windows and Linux by using "mailto" to share text via Email. Sharing files is not supported on Windows and Linux.
 3. 
 - In `main.dart` file,
-  - Declare `text` and `subject` variables and `imageNames` and `imagePaths` lists. Initialize imagePicker.
+  - Declare `text` and `subject` variables and `names` and `paths` lists. Initialize imagePicker.
       ```dart
       String text = '';
       String subject = '';
-      List<String> imageNames = [];
-      List<String> imagePaths = [];
+      List<String> names = [];
+      List<String> paths = [];
       final imagePicker = ImagePicker();
       ```
-  - First UI is TextField for sharing text. Second is TextField for sharing subject. Third is imagePreview of selected images. 
-  - Then there is `Add image` button to add and preview the images. `file_selector` package for windows, macos & Linux and `image_picker` for other platforms to pick an image from device files.
+  - After two `TextField`s, there are three buttons: First button is `Add image` button to add the images. `file_selector` package for windows, macos & Linux and `image_picker` for other platforms to pick an image from device files.
 ```dart
               ElevatedButton.icon(
                 label: const Text('Add image'),
@@ -126,8 +125,8 @@ Answer: Follow this link: https://medium.flutterdevs.com/sharing-files-in-flutte
                     );
                     if (file != null) {
                       setState(() {
-                        imagePaths.add(file.path);
-                        imageNames.add(file.name);
+                        paths.add(file.path);
+                        names.add(file.name);
                       });
                     }
                   } else {
@@ -137,26 +136,32 @@ Answer: Follow this link: https://medium.flutterdevs.com/sharing-files-in-flutte
                     );
                     if (pickedFile != null) {
                       setState(() {
-                        imagePaths.add(pickedFile.path);
-                        imageNames.add(pickedFile.name);
+                        paths.add(pickedFile.path);
+                        names.add(pickedFile.name);
                       });
                     }
                   }
                 },
               ),
 ```
-  - Three buttons, one is `Share`, it shares text, subject and images without printing result in snackBar. It calls _onShare method. It first create an empty list of `XFile` and then adds `XFiles` with loop including imagePath and imageName. First it tries to share `XFiles` using `await Share.shareXFiles`. If there is any error or no `XFile` then it uses `await Share.share` to share text and subject of first two TextFields.
+  - Second button is `Add video` and when it is pressed, you can choose files. You can directly share them using `onShare` method and clicking on `Share` button.
 ```dart
-  void _onShare(BuildContext context) async {
+await imagePicker.pickVideo(
+                    source: ImageSource.gallery,
+                  );
+```
+  - Third button is `Share`, it shares text, subject, images and videos all together. It calls onShare method. It first create an empty list of `XFile` and then adds `XFiles` with loop including `path` and `name`. First it tries to share `XFiles` using `await Share.shareXFiles`. If there is any error or no `XFile` then it uses `await Share.share` to share text and subject of first two TextFields.
+```dart
+  void onShare(BuildContext context) async {
     final box = context.findRenderObject() as RenderBox?;
 
-    if (imagePaths.isNotEmpty) {
+    if (paths.isNotEmpty) {
       final files = <XFile>[];
-      for (var i = 0; i < imagePaths.length; i++) {
+      for (var i = 0; i < paths.length; i++) {
         files.add(
           XFile(
-            imagePaths[i],
-            name: imageNames[i],
+            paths[i],
+            name: names[i],
           ),
         );
       }
@@ -174,61 +179,4 @@ Answer: Follow this link: https://medium.flutterdevs.com/sharing-files-in-flutte
       );
     }
   }
-```
-Second button is `Share With Result`. It shares text, subject and images showing result in snackBar. It calls `_onShareWithResult` method. It is similar to `_onShare` method except it save the `shareResult` and show it in snackBar.
-```dart
-  void _onShareWithResult(BuildContext context) async {
-    final box = context.findRenderObject() as RenderBox?;
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-    ShareResult shareResult;
-    if (imagePaths.isNotEmpty) {
-      final files = <XFile>[];
-      for (var i = 0; i < imagePaths.length; i++) {
-        files.add(
-          XFile(
-            imagePaths[i],
-            name: imageNames[i],
-          ),
-        );
-      }
-      shareResult = await Share.shareXFiles(
-        files,
-        text: text,
-        subject: subject,
-        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-      );
-    } else {
-      shareResult = await Share.shareWithResult(
-        text,
-        subject: subject,
-        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-      );
-    }
-    scaffoldMessenger.showSnackBar(
-      getResultSnackBar(shareResult),
-    );
-  }
-```
-Third button is `Share Video` and when it is pressed, you can choose files. There is no preview of videos. You can directly share them using `_onShare` method.
-```dart 
-await imagePicker.pickVideo(
-                    source: ImageSource.gallery,
-                  );
-``` 
-
-- In `image_preview.dart`, imagePaths and onDelete are initialized.
-```dart
-final List<String> imagePaths;
-final Function(int)? onDelete; 
-```
-Then `imageWidgets` are initialized.
-```dart
-    final imageWidgets = <Widget>[];
-```
-These widgets are shown in SingleChildScrollView with horizontal direction.
-```dart 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(children: imageWidgets),
-    );
 ```

@@ -7,34 +7,30 @@ import 'package:image_picker/image_picker.dart'
     hide XFile; // hides to test if share_plus exports XFile
 import 'package:share_plus/share_plus.dart';
 
-import 'image_previews.dart';
-
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-    MaterialApp(
-      title: 'Share Plus Plugin Demo',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: const Color(0x9f4376f8),
-        appBarTheme: const AppBarTheme(
-          titleTextStyle: TextStyle(fontSize: 30),
-          backgroundColor: Colors.orange,
+  Widget build(BuildContext context) => MaterialApp(
+        title: 'Share Plus Plugin Demo',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: const Color(0x9f4376f8),
+          appBarTheme: const AppBarTheme(
+            titleTextStyle: TextStyle(fontSize: 30),
+            backgroundColor: Colors.orange,
+          ),
+          textTheme: const TextTheme(
+            bodyLarge: TextStyle(fontSize: 30.0),
+            titleMedium: TextStyle(fontSize: 30.0),
+            labelLarge: TextStyle(fontSize: 30.0),
+          ),
         ),
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(fontSize: 22.0),
-          titleMedium: TextStyle(fontSize: 20.0),
-        ),
-      ),
-      home: const SharePlusPage(),
-    );
-  }
+        home: const SharePlusPage(),
+      );
+}
 
 class SharePlusPage extends StatefulWidget {
   const SharePlusPage({Key? key}) : super(key: key);
@@ -46,16 +42,14 @@ class SharePlusPage extends StatefulWidget {
 class SharePlusPageState extends State<SharePlusPage> {
   String text = '';
   String subject = '';
-  List<String> imageNames = [];
-  List<String> imagePaths = [];
+  List<String> names = [];
+  List<String> paths = [];
   final imagePicker = ImagePicker();
 
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title:  const Text(
-            'Share Plus Plugin Demo'
-          ),
+          title: const Text('Share Plus Plugin Demo'),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -87,10 +81,6 @@ class SharePlusPageState extends State<SharePlusPage> {
                 }),
               ),
               const SizedBox(height: 16),
-              ImagePreviews(
-                imagePaths,
-                onDelete: _onDeleteImage,
-              ),
               ElevatedButton.icon(
                 label: const Text('Add image'),
                 icon: const Icon(Icons.add),
@@ -109,8 +99,8 @@ class SharePlusPageState extends State<SharePlusPage> {
                     );
                     if (file != null) {
                       setState(() {
-                        imagePaths.add(file.path);
-                        imageNames.add(file.name);
+                        paths.add(file.path);
+                        names.add(file.name);
                       });
                     }
                   } else {
@@ -120,73 +110,62 @@ class SharePlusPageState extends State<SharePlusPage> {
                     );
                     if (pickedFile != null) {
                       setState(() {
-                        imagePaths.add(pickedFile.path);
-                        imageNames.add(pickedFile.name);
+                        paths.add(pickedFile.path);
+                        names.add(pickedFile.name);
                       });
                     }
                   }
                 },
               ),
               const SizedBox(height: 32),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                ),
-                onPressed: text.isEmpty && imagePaths.isEmpty
-                    ? null
-                    : () => _onShare(context),
-                child: const Text('Share'),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                ),
-                onPressed: text.isEmpty && imagePaths.isEmpty
-                    ? null
-                    : () => _onShareWithResult(context),
-                child: const Text('Share With Result'),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                ),
+              ElevatedButton.icon(
+                label: const Text('Add video'),
+                icon: const Icon(Icons.add),
                 onPressed: () async {
                   final video = await imagePicker.pickVideo(
                     source: ImageSource.gallery,
                   );
-                  if (video == null) return;
-                  if (!mounted) return;
-                  _onShare(context);
+                  if (video != null) {
+                    setState(() {
+                      paths.add(video.path);
+                      names.add(video.name);
+                    });
+                  }
                 },
-                child: const Text('Share Video'),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: text.isEmpty && paths.isEmpty
+                    ? null
+                    : () => onShare(context),
+                child: const Text('Share'),
               ),
             ],
           ),
         ),
       );
 
-  void _onDeleteImage(int position) {
+  void onDeleteImage(int position) {
     setState(() {
-      imagePaths.removeAt(position);
-      imageNames.removeAt(position);
+      paths.removeAt(position);
+      names.removeAt(position);
     });
   }
 
-  void _onShare(BuildContext context) async {
+  void onShare(BuildContext context) async {
     final box = context.findRenderObject() as RenderBox?;
 
-    if (imagePaths.isNotEmpty) {
+    if (paths.isNotEmpty) {
       final files = <XFile>[];
-      for (var i = 0; i < imagePaths.length; i++) {
+      for (var i = 0; i < paths.length; i++) {
         files.add(
           XFile(
-            imagePaths[i],
-            name: imageNames[i],
+            paths[i],
+            name: names[i],
           ),
         );
       }
@@ -204,48 +183,4 @@ class SharePlusPageState extends State<SharePlusPage> {
       );
     }
   }
-
-  void _onShareWithResult(BuildContext context) async {
-    final box = context.findRenderObject() as RenderBox?;
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-    ShareResult shareResult;
-    if (imagePaths.isNotEmpty) {
-      final files = <XFile>[];
-      for (var i = 0; i < imagePaths.length; i++) {
-        files.add(
-          XFile(
-            imagePaths[i],
-            name: imageNames[i],
-          ),
-        );
-      }
-      shareResult = await Share.shareXFiles(
-        files,
-        text: text,
-        subject: subject,
-        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-      );
-    } else {
-      shareResult = await Share.shareWithResult(
-        text,
-        subject: subject,
-        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-      );
-    }
-    scaffoldMessenger.showSnackBar(
-      getResultSnackBar(shareResult),
-    );
-  }
-
-  SnackBar getResultSnackBar(ShareResult result) => SnackBar(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Share result: ${result.status}'),
-            if (result.status == ShareResultStatus.success)
-              Text('Shared to: ${result.raw}')
-          ],
-        ),
-      );
 }
