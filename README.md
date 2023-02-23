@@ -241,61 +241,19 @@ child: const Text('Share Images/Text/Subject'),
                 child: const Text('Share Videos'),
               ),
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-asldkjfa;lskdfjf
-
-
-
-
-
-
-
-
-
-
-
-
-- Third button is `Add Videos`, it shares videos only. It calls `onShareVideos()` method.
-  <br />`onShareVideos()` method: It first create an empty list of `XFile` and then adds `XFiles` with loop including `videoPaths` and `videoNames`. It shares `XFiles` using `await Share.shareXFiles()` and shares the videos.
+- In `image_preview.dart`, `imagePaths` and `onDelete` are initialized.
 ```dart
-              ElevatedButton.icon(
-                label: const Text('Add videos'),
-                icon: const Icon(Icons.add),
-                onPressed: () async {
-                  final pickedFile = await imagePicker.pickVideo(
-                    source: ImageSource.gallery,
-                  );
-                  if (pickedFile != null) {
-                    setState(() {
-                      videoPaths.add(pickedFile.path);
-                      videoNames.add(pickedFile.name);
-                    });
-                  }
-                },
-              ),
+  final List<String> imagePaths;
+  final Function(int)? onDelete;
 ```
-`Share Videos` button code:
+Then `imageWidgets` are initialized.
 ```dart
-              ElevatedButton(
-                onPressed: videoPaths.isEmpty
-                    ? null
-                    : () {
-                        onShareVideos(context);
-                      },
-                child: const Text('Share Videos'),
-              ),
+    final imageWidgets = <Widget>[];
+```
+These widgets are shown in SingleChildScrollView with horizontal direction.
+```dart
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(children: imageWidgets),
+    );
 ```
