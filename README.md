@@ -95,7 +95,7 @@
 **The Structured Main Content**
 1. Run `dart pub get share_plus` to add share plus package in `pubspec.yaml` file. Also add `image_picker` and `file_selector` for selecting and sharing images and files.
 2. There is no need to setup for android and iOS. Also compatible with Windows and Linux by using "mailto" to share text via Email. Sharing files is not supported on Windows and Linux.
-3. In `share_plus_page.dart` file,
+3. In `share_plus_page.dart` file:
   - Declare `text` and `subject` variables to share them with images, `imageNames` and `imagePaths` lists for images, and `videoNames` and `videoPaths` lists for videos. Initialize imagePicker.
 ```dart
   String text = '';
