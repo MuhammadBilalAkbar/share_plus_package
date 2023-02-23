@@ -72,7 +72,7 @@
 - Question: Does share plus plugin works with iPad ? In iphone it works fine but getting error in iPad. Any solution? Thanks 🙏🏻
 - Question: Would you know if there is a way of sharing text to Facebook with this package? On the docs they said that Facebook imposed some restrictions that don't allow sharing text. Is the solution using the "Share" package you presented on a previous video?
 - Question: Hi! how can I share a video that I have in my assets folder?
-Answer: Follow this link: https://medium.flutterdevs.com/sharing-files-in-flutter-66aa4e115256
+<br />Answer: Follow this link: https://medium.flutterdevs.com/sharing-files-in-flutter-66aa4e115256
 
 **Problems from Flutter Stackoverflow**
 
@@ -96,16 +96,19 @@ Answer: Follow this link: https://medium.flutterdevs.com/sharing-files-in-flutte
 1. Run `dart pub get share_plus` to add share plus package in `pubspec.yaml` file. Also add `image_picker` and `file_selector` for selecting and sharing images and files.
 2. There is no need to setup for android and iOS. Also compatible with Windows and Linux by using "mailto" to share text via Email. Sharing files is not supported on Windows and Linux.
 3. 
-- In `main.dart` file,
-  - Declare `text` and `subject` variables and `names` and `paths` lists. Initialize imagePicker.
-      ```dart
-      String text = '';
-      String subject = '';
-      List<String> names = [];
-      List<String> paths = [];
-      final imagePicker = ImagePicker();
-      ```
-  - After two `TextField`s, there are three buttons: First button is `Add image` button to add the images. `file_selector` package for windows, macos & Linux and `image_picker` for other platforms to pick an image from device files.
+- In `share_plus_page.dart` file,
+  - Declare `text` and `subject` variables to share them with images, `imageNames` and `imagePaths` lists for images, and `videoNames` and `videoPaths` lists for videos. Initialize imagePicker.
+```dart
+  String text = '';
+  String subject = '';
+  List<String> imageNames = [];
+  List<String> imagePaths = [];
+  List<String> videoNames = [];
+  List<String> videoPaths = [];
+  final imagePicker = ImagePicker();
+```
+  - After two `TextField`s, there are four buttons:
+  - First button is `ElevatedButton.icon` with child text `Add image` button to add the images. `file_selector` package for windows, macos & Linux and `image_picker` for other platforms to pick an image from device files.
 ```dart
               ElevatedButton.icon(
                 label: const Text('Add image'),
@@ -144,24 +147,19 @@ Answer: Follow this link: https://medium.flutterdevs.com/sharing-files-in-flutte
                 },
               ),
 ```
-  - Second button is `Add video` and when it is pressed, you can choose files. You can directly share them using `onShare` method and clicking on `Share` button.
+  - Second button is `Share Images/Text/Subject`, it shares text, subject, and images together. It calls `onShareImages()` method.
+<br />`onShareImages()` method: It first create an empty list of `XFile` and then adds `XFiles` with loop including `imagePaths` and `imageNames`. First it tries to share `XFiles` using `await Share.shareXFiles()`. If there is any error or no `XFile` then it uses `await Share.share()` to share text and subject of first two TextFields.
 ```dart
-await imagePicker.pickVideo(
-                    source: ImageSource.gallery,
-                  );
-```
-  - Third button is `Share`, it shares text, subject, images and videos all together. It calls onShare method. It first create an empty list of `XFile` and then adds `XFiles` with loop including `path` and `name`. First it tries to share `XFiles` using `await Share.shareXFiles`. If there is any error or no `XFile` then it uses `await Share.share` to share text and subject of first two TextFields.
-```dart
-  void onShare(BuildContext context) async {
+  void onShareImages(BuildContext context) async {
     final box = context.findRenderObject() as RenderBox?;
 
-    if (paths.isNotEmpty) {
+    if (imagePaths.isNotEmpty) {
       final files = <XFile>[];
-      for (var i = 0; i < paths.length; i++) {
+      for (var i = 0; i < imagePaths.length; i++) {
         files.add(
           XFile(
-            paths[i],
-            name: names[i],
+            imagePaths[i],
+            name: imageNames[i],
           ),
         );
       }
@@ -179,4 +177,125 @@ await imagePicker.pickVideo(
       );
     }
   }
+```
+`Share Image/Text/Subject` button code:
+```dart
+ElevatedButton(
+onPressed: text.isEmpty && imagePaths.isEmpty
+? null
+: () => onShareImages(context),
+child: const Text('Share Images/Text/Subject'),
+),
+```
+  - Third button is `ElevatedButton.icon` with child text `Add video` button to add the videos. It uses `imagePicker.pickVideo()` to pick video from gallery.
+```dart
+              ElevatedButton.icon(
+                label: const Text('Add video'),
+                icon: const Icon(Icons.add),
+                onPressed: () async {
+                  final pickedFile = await imagePicker.pickVideo(
+                    source: ImageSource.gallery,
+                  );
+                  if (pickedFile != null) {
+                    setState(() {
+                      videoPaths.add(pickedFile.path);
+                      videoNames.add(pickedFile.name);
+                    });
+                  }
+                },
+              ),
+```
+  - Fourth button is `Share Videos`, it shares videos only. It calls `onShareVideos()` method.
+<br />`onShareVideos()` method:  It first create an empty list of `XFile` and then adds `XFiles` with loop including `videoPaths` and `videoNames`. It shares `XFiles` using `await Share.shareXFiles()` and shares the videos.
+```dart
+  void onShareVideos(BuildContext context) async {
+    final box = context.findRenderObject() as RenderBox?;
+
+    if (videoPaths.isNotEmpty) {
+      final files = <XFile>[];
+      for (var i = 0; i < videoPaths.length; i++) {
+        files.add(
+          XFile(
+            videoPaths[i],
+            name: videoNames[i],
+          ),
+        );
+      }
+      await Share.shareXFiles(
+        files,
+        text: text,
+        subject: subject,
+        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+      );
+    }
+  }
+```
+`Share Videos` button code:
+```dart
+              ElevatedButton(
+                onPressed: videoPaths.isEmpty
+                    ? null
+                    : () {
+                        onShareVideos(context);
+                      },
+                child: const Text('Share Videos'),
+              ),
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+asldkjfa;lskdfjf
+
+
+
+
+
+
+
+
+
+
+
+
+- Third button is `Add Videos`, it shares videos only. It calls `onShareVideos()` method.
+  <br />`onShareVideos()` method: It first create an empty list of `XFile` and then adds `XFiles` with loop including `videoPaths` and `videoNames`. It shares `XFiles` using `await Share.shareXFiles()` and shares the videos.
+```dart
+              ElevatedButton.icon(
+                label: const Text('Add videos'),
+                icon: const Icon(Icons.add),
+                onPressed: () async {
+                  final pickedFile = await imagePicker.pickVideo(
+                    source: ImageSource.gallery,
+                  );
+                  if (pickedFile != null) {
+                    setState(() {
+                      videoPaths.add(pickedFile.path);
+                      videoNames.add(pickedFile.name);
+                    });
+                  }
+                },
+              ),
+```
+`Share Videos` button code:
+```dart
+              ElevatedButton(
+                onPressed: videoPaths.isEmpty
+                    ? null
+                    : () {
+                        onShareVideos(context);
+                      },
+                child: const Text('Share Videos'),
+              ),
 ```

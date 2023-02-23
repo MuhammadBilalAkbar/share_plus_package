@@ -109,7 +109,7 @@ class SharePlusPageState extends State<SharePlusPage> {
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
-                label: const Text('Add videos'),
+                label: const Text('Add video'),
                 icon: const Icon(Icons.add),
                 onPressed: () async {
                   final pickedFile = await imagePicker.pickVideo(
@@ -191,12 +191,5 @@ class SharePlusPageState extends State<SharePlusPage> {
         sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
       );
     }
-    // else {
-    //   await Share.share(
-    //     text,
-    //     subject: subject,
-    //     sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-    //   );
-    // }
   }
 }
