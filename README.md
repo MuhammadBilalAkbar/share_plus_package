@@ -95,10 +95,9 @@
 **The Structured Main Content**
 1. Run `dart pub get share_plus` to add share plus package in `pubspec.yaml` file. Also add `image_picker` and `file_selector` for selecting and sharing images and files.
 2. There is no need to setup for android and iOS. Also compatible with Windows and Linux by using "mailto" to share text via Email. Sharing files is not supported on Windows and Linux.
-3. 
-- In `share_plus_page.dart` file,
+3. In `share_plus_page.dart` file,
   - Declare `text` and `subject` variables to share them with images, `imageNames` and `imagePaths` lists for images, and `videoNames` and `videoPaths` lists for videos. Initialize imagePicker.
-  ```dart
+```dart
   String text = '';
   String subject = '';
   List<String> imageNames = [];
@@ -106,10 +105,10 @@
   List<String> videoNames = [];
   List<String> videoPaths = [];
   final imagePicker = ImagePicker();
-  ```
+```
   - After two `TextField`s, there are four buttons:
   - First button is `ElevatedButton.icon` with child text `Add image` button to add the images. `file_selector` package for windows, macos & Linux and `image_picker` for other platforms to pick an image from device files.
-  ```dart
+```dart
               ElevatedButton.icon(
                 label: const Text('Add image'),
                 icon: const Icon(Icons.add),
@@ -146,10 +145,10 @@
                   }
                 },
               ),
-  ```
+```
   - Second button is `Share Images/Text/Subject`, it shares text, subject, and images together. It calls `onShareImages()` method.
 <br />`onShareImages()` method: It first create an empty list of `XFile` and then adds `XFiles` with loop including `imagePaths` and `imageNames`. First it tries to share `XFiles` using `await Share.shareXFiles()`. If there is any error or no `XFile` then it uses `await Share.share()` to share text and subject of first two TextFields.
-  ```dart
+```dart
   void onShareImages(BuildContext context) async {
     final box = context.findRenderObject() as RenderBox?;
 
@@ -177,18 +176,18 @@
       );
     }
   }
-  ```
+```
 `Share Image/Text/Subject` button code:
-  ```dart
+```dart
 ElevatedButton(
 onPressed: text.isEmpty && imagePaths.isEmpty
 ? null
 : () => onShareImages(context),
 child: const Text('Share Images/Text/Subject'),
 ),
-  ```
+```
   - Third button is `ElevatedButton.icon` with child text `Add video` button to add the videos. It uses `imagePicker.pickVideo()` to pick video from gallery.
-  ```dart
+```dart
               ElevatedButton.icon(
                 label: const Text('Add video'),
                 icon: const Icon(Icons.add),
@@ -204,10 +203,10 @@ child: const Text('Share Images/Text/Subject'),
                   }
                 },
               ),
-  ```
+```
   - Fourth button is `Share Videos`, it shares videos only. It calls `onShareVideos()` method.
 <br />`onShareVideos()` method:  It first create an empty list of `XFile` and then adds `XFiles` with loop including `videoPaths` and `videoNames`. It shares `XFiles` using `await Share.shareXFiles()` and shares the videos.
-  ```dart
+```dart
   void onShareVideos(BuildContext context) async {
     final box = context.findRenderObject() as RenderBox?;
 
@@ -229,9 +228,9 @@ child: const Text('Share Images/Text/Subject'),
       );
     }
   }
-  ```
+```
 `Share Videos` button code:
-  ```dart
+```dart
               ElevatedButton(
                 onPressed: videoPaths.isEmpty
                     ? null
@@ -240,8 +239,8 @@ child: const Text('Share Images/Text/Subject'),
                       },
                 child: const Text('Share Videos'),
               ),
-  ```
-- In `image_preview.dart`, `imagePaths` and `onDelete` are initialized.
+```
+4. In `image_preview.dart`, `imagePaths` and `onDelete` are initialized.
 ```dart
   final List<String> imagePaths;
   final Function(int)? onDelete;
